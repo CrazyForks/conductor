@@ -143,14 +143,15 @@ enum ConductorGhosttyConfigCatalog {
     static let booleanKeys: Set<String> = [
         "cursor-style-blink", "cursor-click-to-move", "selection-clear-on-typing",
         "selection-clear-on-copy", "copy-on-select", "mouse-hide-while-typing",
-        "mouse-reporting", "link-url", "link-previews", "clipboard-read",
-        "clipboard-write", "clipboard-trim-trailing-spaces", "clipboard-paste-protection",
+        "mouse-reporting", "link-url", "link-previews", "clipboard-write",
+        "clipboard-trim-trailing-spaces", "clipboard-paste-protection",
         "clipboard-paste-bracketed-safe", "shell-integration", "font-thicken"
     ]
 
     static let choiceOptions: [String: [(label: String, value: String)]] = [
         "cursor-style": [(L("块"), "block"), (L("空心块"), "block_hollow"), (L("竖线"), "bar"), (L("下划线"), "underline")],
         "background-image-fit": [(L("包含"), "contain"), (L("覆盖"), "cover"), (L("拉伸"), "stretch"), (L("不缩放"), "none")],
+        "clipboard-read": [(L("询问"), "ask"), (L("允许"), "allow"), (L("拒绝"), "deny")],
         "macos-option-as-alt": [(L("左"), "left"), (L("右"), "right"), (L("两侧"), "true"), (L("关闭"), "false")],
         "alpha-blending": [(L("线性校正"), "linear-corrected"), (L("原生"), "native"), (L("线性"), "linear")]
     ]

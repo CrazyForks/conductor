@@ -51,7 +51,9 @@ final class UsageScannerTests: XCTestCase {
         // 成本：opus($5/$25/$6.25/$0.50) + sonnet($3/$15)
         // opus = (100*5 + 200*25 + 50*6.25 + 1000*0.5)/1e6 = (500+5000+312.5+500)/1e6
         // sonnet = (10*3 + 20*15)/1e6 = (30+300)/1e6
-        let expected = (500.0 + 5000 + 312.5 + 500 + 30 + 300) / 1_000_000
+        let opusCost = 500.0 + 5_000.0 + 312.5 + 500.0
+        let sonnetCost = 30.0 + 300.0
+        let expected = (opusCost + sonnetCost) / 1_000_000
         XCTAssertEqual(report.grand.costUSD, expected, accuracy: 1e-9)
 
         XCTAssertEqual(report.byModel.count, 2)
@@ -111,7 +113,14 @@ final class UsageScannerTests: XCTestCase {
         XCTAssertEqual(report.grand.cacheReadTokens, 30)
         // Sonnet: input $3/M, output $15/M, cache read $0.30/M.
         // 30 cache-create tokens use 5m write rate $3.75/M; 40 use 1h rate = input*2 = $6/M.
-        let expected = (100.0 * 3 + 200.0 * 15 + 30.0 * 3.75 + 40.0 * 6 + 30.0 * 0.30) / 1_000_000
+        let inputCost = 100.0 * 3.0
+        let outputCost = 200.0 * 15.0
+        let cacheCreateFiveMinuteCost = 30.0 * 3.75
+        let cacheCreateOneHourCost = 40.0 * 6.0
+        let cacheReadCost = 30.0 * 0.30
+        let expected = (
+            inputCost + outputCost + cacheCreateFiveMinuteCost + cacheCreateOneHourCost + cacheReadCost
+        ) / 1_000_000
         XCTAssertEqual(report.grand.costUSD, expected, accuracy: 1e-12)
     }
 

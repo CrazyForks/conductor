@@ -189,7 +189,6 @@ final class GhosttyRuntime {
         set("window-padding-y", "\(a.padding.y)")
         set("window-padding-balance", "true")
         set("cursor-style", a.cursorStyle)
-        set("clipboard-read", "false")
         // ghostty 的 scrollback-limit 单位是字节（按需分配，设大无固定开销）。
         // 行数 → 字节按 512B/行 保守折算（约 160 列 × UTF-8 中文 3B），确保至少能存下配置的行数。
         set("scrollback-limit", "\(config.terminal.scrollback * 512)")

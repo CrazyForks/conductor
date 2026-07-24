@@ -553,23 +553,10 @@ final class GhosttySurface: TerminalSurface {
     /// 由 read_clipboard_cb 回到主线程后调用：把系统剪贴板内容回填给 libghostty（用于 paste）。
     func completeClipboardRequest(state: UnsafeMutableRawPointer) {
         guard let surface else { return }
-        let text = Self.terminalClipboardReadPayload(
-            allowRead: Self.isTerminalClipboardReadAllowed(),
-            pasteboardText: NSPasteboard.general.string(forType: .string))
+        let text = NSPasteboard.general.string(forType: .string) ?? ""
         text.withCString {
             ghostty_surface_complete_clipboard_request(surface, $0, state, false)
         }
-    }
-
-    nonisolated static func terminalClipboardReadPayload(allowRead: Bool, pasteboardText: String?) -> String {
-        allowRead ? (pasteboardText ?? "") : ""
-    }
-
-    private static func isTerminalClipboardReadAllowed() -> Bool {
-        let raw = ConfigStore.shared.config.ghosttyOverrides["clipboard-read"]?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .lowercased()
-        return raw == "true" || raw == "1" || raw == "yes" || raw == "on"
     }
 
     // MARK: - Runtime action routing 回调

@@ -49,6 +49,14 @@ final class GhosttyConfigCatalogTests: XCTestCase {
         XCTAssertEqual(Set(options.map(\.value)), ["contain", "cover", "stretch", "none"])
     }
 
+    func testClipboardReadUsesGhosttyPolicyValues() {
+        guard case let .choice(options) = ConductorGhosttyConfigCatalog.controlKind(for: "clipboard-read") else {
+            return XCTFail("clipboard-read should use a choice control")
+        }
+
+        XCTAssertEqual(Set(options.map(\.value)), ["ask", "allow", "deny"])
+    }
+
     func testAllCatalogKeysHaveLocalizedUserFacingCopy() {
         for key in ConductorGhosttyConfigCatalog.productGroups.flatMap(\.keys) {
             let copy = ConductorGhosttyConfigCatalog.copy(for: key)
@@ -86,18 +94,19 @@ final class GhosttyConfigCatalogTests: XCTestCase {
     }
 
     @MainActor
-    func testGhosttyConfigTextDisablesClipboardReadByDefault() {
+    func testGhosttyConfigTextDoesNotInjectClipboardReadByDefault() {
         let text = GhosttyRuntime.ghosttyConfigText(from: .default)
-        XCTAssertTrue(text.contains("clipboard-read = false"))
+        XCTAssertFalse(text.contains("clipboard-read"))
     }
 
-    func testTerminalClipboardReadPayloadRequiresExplicitPermission() {
-        XCTAssertEqual(
-            GhosttySurface.terminalClipboardReadPayload(allowRead: false, pasteboardText: "secret"),
-            "")
-        XCTAssertEqual(
-            GhosttySurface.terminalClipboardReadPayload(allowRead: true, pasteboardText: "visible"),
-            "visible")
+    @MainActor
+    func testGhosttyConfigTextPreservesClipboardReadOverride() {
+        var config = AppConfig.default
+        config.ghosttyOverrides = ["clipboard-read": "deny"]
+
+        let text = GhosttyRuntime.ghosttyConfigText(from: config)
+
+        XCTAssertTrue(text.contains("clipboard-read = deny"))
     }
 
     @MainActor
